@@ -1,7 +1,7 @@
 package com.flab.baseballgame.controller;
 
 
-import com.flab.baseballgame.controller.dto.Data;
+import com.flab.baseballgame.controller.dto.*;
 import com.flab.baseballgame.controller.response.ApiResponse;
 import com.flab.baseballgame.repository.Db;
 import org.springframework.http.ResponseEntity;
@@ -14,95 +14,118 @@ import java.util.concurrent.ConcurrentHashMap;
 @RestController
 @RequestMapping("/game")
 public class baseballController {
-    /**
-     * // room id가 발급되고, 중복되지 않는 1-9 사이의 세 숫자가 정답으로 저장이 되어있어야 함
-     * >>그러니깐 db에 저장하는식으로 정답이 있어야 겠네.
-     * key값이 roomId이고 value가 1-9사이의 3개의 숫자가 저장되어야 겠네.
-     * response
-     * {
-     * "success": true,
-     * "data": {
-     * "roomId": 123
-     * }
-     * }
-     **/
+
     private ConcurrentHashMap map = null;
 
-    //메서드호출흐름알려고 잠시 만든 것.
-
-
-    @PostMapping(path = "/start2")
-    public String start2() {
-        StackTraceElement[] stack = new Throwable().getStackTrace();
-        for (StackTraceElement stackTraceElement : stack) {
-            System.out.println(stackTraceElement);
-        }
-        return "323";
-    }
+    /**
+     * //메서드호출흐름확인해볼려고 잠시만든것.
+     *
+     * @PostMapping(path = "/start2")
+     * public String start2() {
+     * StackTraceElement[] stack = new Throwable().getStackTrace();
+     * for (StackTraceElement stackTraceElement : stack) {
+     * System.out.println(stackTraceElement);
+     * }
+     * return "323";
+     * }
+     **/
 
     @PostMapping(path = "/start")
     public ResponseEntity start() {
-        Random random = new Random();
-        int number = random.nextInt(999);
-        for (; ; ) {
-            if (number < 100) {
-                random.nextInt();
-            } else {
-                break;
-            }
-        }
+
+        int number = getThreeRandumNumber();
 
         map = new ConcurrentHashMap();
         Db repo = new Db() {
             @Override
-            public void insert(Random key, String value) {
+            public void insert(int key, int value) {
                 map.put(key, value);
             }
+
+            @Override
+            public int select(int key) {
+                return 0;
+            }
         };
-        repo.insert(random, "별도의랜덤값");
+        repo.insert(number, getThreeRandumNumber());
 
-        System.out.println(number);
 
-        Data data = new Data(number);
+        Data data = new RoomData(number);
         ApiResponse apiResponse = new ApiResponse(null, data);
         return ResponseEntity.ok(apiResponse);
     }
 
-
-    @PostMapping(path = "/{id}/answer")
-    public ResponseEntity getInoformation(@PathVariable(name = "id") int id, @RequestBody int answer) throws Exception {
-        if (false) {
-            throw new Exception();
+    private int getThreeRandumNumber() {
+        int number = new Random().nextInt(999);
+        for (; ; ) {
+            if (number < 100) {
+                number = new Random().nextInt(999);
+            } else {
+                break;
+            }
         }
+        return number;
+    }
 
+    //data를 추상클래스로 만들어야하나? 인터페이스로?
+    @PostMapping(path = "/{id}/answer")
+    public ResponseEntity getInformation(@PathVariable(name = "id") int roomId, @RequestBody String answer) {
 
+        System.out.println(0);
         ApiResponse apiResponse = new ApiResponse(null, null);
-        if (id의 방이없으면, 즉 게임이 종료되었을 때){
-            apiResponse = new ApiResponse(false, data, error);
+        if (!(map.keySet().contains(roomId))) {
+            System.out.println(1);
+            apiResponse = new ApiResponse("false", null);
+            apiResponse.setErr(new ApiResponse.Err("CLOSED_GAME", ""));
             return ResponseEntity.ok(apiResponse);
         }
-        Rule.rule(id, map);
-
-
+        System.out.println(2);
+        BaseballRecordData record = Rule.rule(answer, map, roomId);
+        System.out.println(3);
+        apiResponse = new ApiResponse(null, record);
         return ResponseEntity.ok(apiResponse);
     }
 
-    @GetMapping(path = "/123")
-    //responsebody,responseentity차이.
-    public String getInoformation2() {
-        return "";
+    /**
+     * "success": true,
+     * "data": {
+     * "remainingCount": 8,
+     * "answerCount": 2
+     **/
+
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<ApiResponse> getCount(@PathVariable(name = "id") int roomId) {
+        int remainingCount = 0;
+        int answerCount = 0;
+        RemainingCountData data = new RemainingCountData(remainingCount, answerCount);
+        ApiResponse apiResponse = new ApiResponse(null, data);
+        return ResponseEntity.ok(apiResponse);
     }
 
-
-    @GetMapping(path = "/123/history")
-    //responsebody,responseentity차이.
-    public String getInoformation3() {
-        return "";
+/**
+ *  histories: [
+ *             {
+ *                 "answer": "123",
+ *                 "result": {
+ *                     "strike": 0,
+ *                     "ball": 0,
+ *                     "out": 3
+ *                 }
+ *             },
+ *             {
+ *                 "answer": "456",
+ *                 "result": {
+ *                     "strike": 0,
+ *                     "ball": 2,
+ *                     "out": 1
+ *                 }
+ * **/
+    @GetMapping(path = "/{id}/history")
+    public ResponseEntity getHistory(@PathVariable(name = "id") int roomId) {
+        HistoryData data = new HistoryData();
+        ApiResponse apiResponse = new ApiResponse(null,data);
+        return ResponseEntity.ok(apiResponse);
     }
-
-
-//success,data,error(optional) 이것은 json으로 반환하는 객체 필요.
-
 
 }
 

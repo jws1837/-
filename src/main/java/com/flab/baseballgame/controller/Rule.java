@@ -1,5 +1,6 @@
 package com.flab.baseballgame.controller;
 
+import com.flab.baseballgame.controller.dto.BaseballRecordData;
 import com.flab.baseballgame.repository.Db;
 
 import java.util.Random;
@@ -15,10 +16,12 @@ public class Rule {
     public Rule() {
     }
 
-    public static int rule(int requestNumber, ConcurrentHashMap map) {
+    public static BaseballRecordData rule(String requestNumber, ConcurrentHashMap map,int roomId) {
         Db db = new Db() {
+
             @Override
-            public void insert(Random key, String value) {
+            public void insert(int key, int value) {
+
             }
 
             @Override
@@ -26,8 +29,8 @@ public class Rule {
                 return Integer.parseInt((String) map.get(key));
             }
         };
-        char[] target = Character.toChars(requestNumber);
-        char[] source = Character.toChars(db.select(requestNumber));
+//        char[] target = Character.toChars(requestNumber);
+//        char[] source = Character.toChars(db.select(requestNumber));
 
         strike = caculateStrike();
         if (strike == 3) {
@@ -35,7 +38,11 @@ public class Rule {
         }
         ball = caculateBall();
         out = caculateOut();
-        return 3;
+
+        int remainingCount = 0;
+        BaseballRecordData data = new BaseballRecordData(true, remainingCount, strike, ball, out);
+        map.put(343, data);
+        return data;
     }
 
     private static int caculateOut() {
