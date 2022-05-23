@@ -2,8 +2,9 @@ package com.flab.baseballgame.controller;
 
 import com.flab.baseballgame.controller.dto.BaseballRecordData;
 import com.flab.baseballgame.repository.Db;
+import com.flab.baseballgame.repository.InMemoryRepository;
+import com.flab.baseballgame.repository.Repository;
 
-import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Rule {
@@ -16,19 +17,9 @@ public class Rule {
     public Rule() {
     }
 
-    public static BaseballRecordData rule(String requestNumber, ConcurrentHashMap map,int roomId) {
-        Db db = new Db() {
-
-            @Override
-            public void insert(int key, int value) {
-
-            }
-
-            @Override
-            public int select(int key) {
-                return Integer.parseInt((String) map.get(key));
-            }
-        };
+    public static BaseballRecordData rule(String requestNumber, ConcurrentHashMap map, int roomId) {
+        Repository repository = new InMemoryRepository();
+        repository.select(requestNumber);
 //        char[] target = Character.toChars(requestNumber);
 //        char[] source = Character.toChars(db.select(requestNumber));
 

@@ -2,7 +2,8 @@ package com.flab.baseballgame.repository;
 
 import java.util.Random;
 
-public interface Db {
-    void insert(int key, int value);
+public interface Repository {
+    void crete(int roomId, int answer);
+
     int select(int key);
 }
