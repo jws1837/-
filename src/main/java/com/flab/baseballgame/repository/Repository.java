@@ -1,5 +1,7 @@
 package com.flab.baseballgame.repository;
 
+import com.flab.baseballgame.service.Score;
+
 import java.util.Random;
 
 public interface Repository {
@@ -7,6 +9,8 @@ public interface Repository {
 
     String findOrginAnswer(int key);
 
+    int findRemainingCount(int roomId);
 
-    int findRemainingCount(int key);
+
+    void insertHistory(String userAnswer, Score score, int roomId);
 }

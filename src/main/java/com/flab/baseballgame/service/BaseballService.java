@@ -2,6 +2,7 @@ package com.flab.baseballgame.service;
 
 import com.flab.baseballgame.controller.dto.BaseballRecordData;
 import com.flab.baseballgame.controller.dto.Data;
+import com.flab.baseballgame.controller.dto.RemainingCountData;
 import com.flab.baseballgame.controller.dto.RoomData;
 import com.flab.baseballgame.controller.response.ApiResponse;
 import com.flab.baseballgame.repository.Repository;
@@ -27,42 +28,36 @@ public class BaseballService {
 
     public Data correctAnswer(int roomId, String userAnswer) {
         String originAnswer = repository.findOrginAnswer(roomId); //원래 정답.
-        BaseballRecordData data = applyRuleAndGetData(originAnswer,userAnswer);
+        BaseballRecordData data = applyRuleAndGetData(originAnswer, userAnswer, roomId);
         return data;
     }
 
-    private BaseballRecordData applyRuleAndGetData(String originAnswer, String userAnswer) {
-        int strike = Rule.caculateStrike();
-        boolean correct= false;
-        if (strike == 3) {
+    private BaseballRecordData applyRuleAndGetData(String originAnswer, String userAnswer, int roomId) {
+        Score score = Rule.caculateScore();
+        boolean correct = false;
+        if (3 == score.getStrike()) {
             correct = true;
         }
-        int ball = Rule.caculateBall();
-        int out = Rule.caculateOut();
-        int remainingCount = repository.findRemainingCount();
-        BaseballRecordData data = new BaseballRecordData(true, remainingCount, strike, ball, out);
-//        map.put(343, data);
+        int remainingCount = repository.findRemainingCount(roomId);
+        BaseballRecordData data = new BaseballRecordData(correct, remainingCount, score);
+        remainingCount--;
+        repository.insertHistory(userAnswer, score, roomId);
         return data;
     }
 
-    private static int caculateOut() {
-        return 2;
-    }
 
-    private static int caculateBall() {
-        return 1;
-    }
-
-    private static int caculateStrike() {
-        return 0;
-    }
+    //예외로 만들어버리기 .
+    private ApiResponse notExistIdResponse() {
+        ApiResponse apiResponse = new ApiResponse("false", null);
+        apiResponse.setErr(new ApiResponse.Err("CLOSED_GAME", ""));
+        return apiResponse;
     }
 
 
-            private ApiResponse notExistIdResponse() {
-                                    ApiResponse apiResponse = new ApiResponse("false", null);
-                                    apiResponse.setErr(new ApiResponse.Err("CLOSED_GAME", ""));
-                                    return apiResponse;
-                                }
-
+    public RemainingCountData getCount(int roomId) {
+        int remainingCount = repository.findRemainingCount(roomId);
+        int answerCount = 10 - remainingCount;
+        RemainingCountData data = new RemainingCountData(remainingCount, answerCount);
+        return data;
+    }
 }

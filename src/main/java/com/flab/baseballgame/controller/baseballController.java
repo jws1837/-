@@ -13,7 +13,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/game")
 public class baseballController {
-    private BaseballService service;
+    private  final BaseballService service;
+
+    public baseballController(BaseballService service) {
+        this.service = service;
+    }
 
     /**
      * //메서드호출흐름확인용
@@ -30,7 +34,6 @@ public class baseballController {
 
     @PostMapping(path = "/start")
     public ResponseEntity start() {
-
         Data data = service.roomCreate();
         ApiResponse apiResponse = new ApiResponse(null, data);
 
@@ -55,9 +58,7 @@ public class baseballController {
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<ApiResponse> getCount(@PathVariable(name = "id") int roomId) {
-        int remainingCount = 0;
-        int answerCount = 0;
-        RemainingCountData data = new RemainingCountData(remainingCount, answerCount);
+        RemainingCountData data = service.getCount(roomId);
         ApiResponse apiResponse = new ApiResponse(null, data);
         return ResponseEntity.ok(apiResponse);
     }

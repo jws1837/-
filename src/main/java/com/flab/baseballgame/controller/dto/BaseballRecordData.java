@@ -1,5 +1,7 @@
 package com.flab.baseballgame.controller.dto;
 
+import com.flab.baseballgame.service.Score;
+
 public class BaseballRecordData implements Data {
     private boolean correct;
     private int remainingCount;
@@ -10,12 +12,12 @@ public class BaseballRecordData implements Data {
     public BaseballRecordData() {
     }
 
-    public BaseballRecordData(boolean correct, int remainingCount, int strike, int ball, int out) {
+    public BaseballRecordData(boolean correct, int remainingCount, Score score) {
         this.correct = correct;
         this.remainingCount = remainingCount;
-        this.strike = strike;
-        this.ball = ball;
-        this.out = out;
+        this.strike = score.getStrike();
+        this.ball = score.getBall();
+        this.out = score.getOut();
     }
 
     public boolean isCorrect() {
