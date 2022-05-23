@@ -1,7 +1,6 @@
 package com.flab.baseballgame.controller;
 
 
-import com.flab.baseballgame.controller.dto.BaseballRecordData;
 import com.flab.baseballgame.controller.dto.Data;
 import com.flab.baseballgame.controller.dto.HistoryData;
 import com.flab.baseballgame.controller.dto.RemainingCountData;
@@ -10,16 +9,11 @@ import com.flab.baseballgame.service.BaseballService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
-
 
 @RestController
 @RequestMapping("/game")
 public class baseballController {
-
-    private ConcurrentHashMap map = null;
-    private ArrayList list = null;
+    private BaseballService service;
 
     /**
      * //메서드호출흐름확인용
@@ -37,31 +31,22 @@ public class baseballController {
     @PostMapping(path = "/start")
     public ResponseEntity start() {
 
-        BaseballService service = new BaseballService();
         Data data = service.roomCreate();
         ApiResponse apiResponse = new ApiResponse(null, data);
 
         return ResponseEntity.ok(apiResponse);
     }
 
-    //data를 추상클래스로 만들어야하나? 인터페이스로?
     @PostMapping(path = "/{id}/answer")
-    public ResponseEntity getInformation(@PathVariable(name = "id") int roomId, @RequestBody String answer) {
-
-        ApiResponse apiResponse = new ApiResponse(null, null);
-        if (!(map.keySet().contains(roomId))) {
-            System.out.println(1);
-            apiResponse = new ApiResponse("false", null);
-            apiResponse.setErr(new ApiResponse.Err("CLOSED_GAME", ""));
-            return ResponseEntity.ok(apiResponse);
-        }
-        BaseballRecordData record = Rule.rule(answer, map, roomId);
-        apiResponse = new ApiResponse(null, record);
+    public ResponseEntity correctAnswer(@PathVariable(name = "id") int roomId, @RequestBody String userAnswer) {
+        Data data = service.correctAnswer(roomId, userAnswer);
+        ApiResponse apiResponse = new ApiResponse(null, data);
         return ResponseEntity.ok(apiResponse);
     }
 
 
     /**
+     * ex)
      * "success": true,
      * "data": {
      * "remainingCount": 8,
@@ -78,6 +63,7 @@ public class baseballController {
     }
 
     /**
+     * ex)
      * histories: [
      * {
      * "answer": "123",
@@ -97,7 +83,8 @@ public class baseballController {
      **/
     @GetMapping(path = "/{id}/history")
     public ResponseEntity getHistory(@PathVariable(name = "id") int roomId) {
-        HistoryData data = new HistoryData();
+//        HistoryData data = new HistoryData();
+        HistoryData data = null;
         ApiResponse apiResponse = new ApiResponse(null, data);
         return ResponseEntity.ok(apiResponse);
     }

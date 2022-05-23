@@ -1,25 +1,32 @@
 package com.flab.baseballgame.repository;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class InMemoryRepository implements Repository {
-    private ArrayList<HashMap> list = new ArrayList<>();
-    //    private ConcurrentHashMap map = new ConcurrentHashMap();
+    private ConcurrentHashMap outerMap = new ConcurrentHashMap();
     private int remainingCount = 10;
     private String answer = "";
 
     @Override
     public void crete(int roomId, int answer) {
-        HashMap map = new HashMap();
-        map.put("remainingCount", remainingCount);
-        map.put("answer", answer);
-        list.add(roomId, map);
+        HashMap innerMap = new HashMap();
+        innerMap.put("remainingCount", remainingCount);
+        innerMap.put("answer", answer);
+        outerMap.put(roomId, innerMap);
     }
 
     @Override
-    public int select(int key) {
-        return Integer.parseInt((String) map.get(key));
+    public String findOrginAnswer(int key) {
+        HashMap innerMap = (HashMap) outerMap.get(key);
+        String orginAnswer = (String) innerMap.get("answer");
+        return orginAnswer;
+    }
+
+    @Override
+    public int findRemainingCount(int key) {
+        HashMap innerMap = (HashMap) outerMap.get(key);
+        int remainingCount = (int) innerMap.get("remainingCount");
+        return remainingCount;
     }
 }

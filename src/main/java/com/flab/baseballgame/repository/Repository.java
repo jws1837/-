@@ -5,5 +5,8 @@ import java.util.Random;
 public interface Repository {
     void crete(int roomId, int answer);
 
-    int select(int key);
+    String findOrginAnswer(int key);
+
+
+    int findRemainingCount(int key);
 }
