@@ -9,8 +9,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class InMemoryRepository implements Repository {
     private ConcurrentHashMap outerMap = new ConcurrentHashMap();
+    private ArrayList list = new ArrayList();
     private int remainingCount = 10;
-    private String answer = "";
 
     @Override
     public void crete(int roomId, int answer) {
@@ -23,7 +23,7 @@ public class InMemoryRepository implements Repository {
     @Override
     public String findOrginAnswer(int key) {
         HashMap innerMap = (HashMap) outerMap.get(key);
-        String orginAnswer =String.valueOf(innerMap.get("answer"));
+        String orginAnswer = String.valueOf(innerMap.get("answer"));
         return orginAnswer;
     }
 
@@ -39,21 +39,27 @@ public class InMemoryRepository implements Repository {
         Map innerMap = (HashMap) outerMap.get(roomId);
 
         HashMap historyMap = new HashMap();
+        historyMap.put("result", score);
         historyMap.put("answer", userAnswer);
-        historyMap.put("Score", score);
 
-        ArrayList historyList = new ArrayList();
-        historyList.add(historyMap);
+        list.add(historyMap);
 
-        innerMap.put("history", historyList);
+        innerMap.put("history", list);
 
     }
 
     @Override
-    public void insertRemainingCount(int roomId,int remainingCount) {
-        Map innerMap = (HashMap)  outerMap.get(roomId);
+    public void insertRemainingCount(int roomId, int remainingCount) {
+        Map innerMap = (HashMap) outerMap.get(roomId);
         innerMap.put("remainingCount", remainingCount);
         outerMap.put(roomId, innerMap);
 
+    }
+
+    @Override
+    public ArrayList findHistory(int roomId) {
+        Map innerMap = (HashMap) outerMap.get(roomId);
+        ArrayList list = (ArrayList) innerMap.get("history");
+        return list;
     }
 }

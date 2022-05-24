@@ -3,6 +3,7 @@ package com.flab.baseballgame.service;
 public class Rule {
 
     public static Score caculateScore(String originAnswer, String userAnswer) {
+
         int totalcount = 3;
         int strikeCount = getStrikeCount(originAnswer, userAnswer);
         int ballCount = getBallCount(originAnswer, userAnswer);

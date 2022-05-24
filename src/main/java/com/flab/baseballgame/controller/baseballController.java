@@ -9,28 +9,17 @@ import com.flab.baseballgame.service.BaseballService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 
 @RestController
 @RequestMapping("/game")
 public class baseballController {
-    private  final BaseballService service;
+    private final BaseballService service;
 
     public baseballController(BaseballService service) {
         this.service = service;
     }
-
-    /**
-     * //메서드호출흐름확인용
-     *
-     * @PostMapping(path = "/start2")
-     * public String start2() {
-     * StackTraceElement[] stack = new Throwable().getStackTrace();
-     * for (StackTraceElement stackTraceElement : stack) {
-     * System.out.println(stackTraceElement);
-     * }
-     * return "323";
-     * }
-     **/
 
     @PostMapping(path = "/start")
     public ResponseEntity start() {
@@ -41,20 +30,12 @@ public class baseballController {
     }
 
     @PostMapping(path = "/{id}/answer")
-    public ResponseEntity correctAnswer(@PathVariable(name = "id") int roomId, @RequestBody String userAnswer) {
-        Data data = service.correctAnswer(roomId, userAnswer);
+    public ResponseEntity correctAnswer(@PathVariable(name = "id") int roomId, @RequestBody Map userAnswer) {
+        String answer = (String) userAnswer.get("answer");
+        Data data = service.correctAnswer(roomId, answer);
         ApiResponse apiResponse = new ApiResponse(null, data);
         return ResponseEntity.ok(apiResponse);
     }
-
-
-    /**
-     * ex)
-     * "success": true,
-     * "data": {
-     * "remainingCount": 8,
-     * "answerCount": 2
-     **/
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<ApiResponse> getCount(@PathVariable(name = "id") int roomId) {
@@ -63,30 +44,12 @@ public class baseballController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    /**
-         * ex)
-     * histories: [
-     * {
-     * "answer": "123",
-     * "result": {
-     * "strike": 0,
-     * "ball": 0,
-     * "out": 3
-     * }
-     * },
-     * {
-     * "answer": "456",
-     * "result": {
-     * "strike": 0,
-     * "ball": 2,
-     * "out": 1
-     * }
-     **/
     @GetMapping(path = "/{id}/history")
     public ResponseEntity getHistory(@PathVariable(name = "id") int roomId) {
-//        HistoryData data = new HistoryData();
-        HistoryData data = null;
+
+        HistoryData data = service.getHistory(roomId);
         ApiResponse apiResponse = new ApiResponse(null, data);
+
         return ResponseEntity.ok(apiResponse);
     }
 

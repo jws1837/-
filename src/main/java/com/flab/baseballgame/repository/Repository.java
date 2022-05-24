@@ -2,6 +2,7 @@ package com.flab.baseballgame.repository;
 
 import com.flab.baseballgame.service.Score;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public interface Repository {
@@ -16,4 +17,7 @@ public interface Repository {
 
 
     void insertRemainingCount(int roomId, int remainingCount);
+
+
+    ArrayList findHistory(int roomId);
 }
