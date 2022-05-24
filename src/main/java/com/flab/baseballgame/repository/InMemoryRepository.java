@@ -48,4 +48,12 @@ public class InMemoryRepository implements Repository {
         innerMap.put("history", historyList);
 
     }
+
+    @Override
+    public void insertRemainingCount(int roomId,int remainingCount) {
+        Map innerMap = (HashMap)  outerMap.get(roomId);
+        innerMap.put("remainingCount", remainingCount);
+        outerMap.put(roomId, innerMap);
+
+    }
 }

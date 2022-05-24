@@ -33,14 +33,15 @@ public class BaseballService {
     }
 
     private BaseballRecordData applyRuleAndGetData(String originAnswer, String userAnswer, int roomId) {
-        Score score = Rule.caculateScore();
+        Score score = Rule.caculateScore(originAnswer,userAnswer);
         boolean correct = false;
         if (3 == score.getStrike()) {
             correct = true;
         }
         int remainingCount = repository.findRemainingCount(roomId);
-        BaseballRecordData data = new BaseballRecordData(correct, remainingCount, score);
         remainingCount--;
+        repository.insertRemainingCount(roomId,remainingCount);
+        BaseballRecordData data = new BaseballRecordData(correct, remainingCount, score);
         repository.insertHistory(userAnswer, score, roomId);
         return data;
     }

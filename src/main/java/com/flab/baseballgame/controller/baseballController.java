@@ -64,7 +64,7 @@ public class baseballController {
     }
 
     /**
-     * ex)
+         * ex)
      * histories: [
      * {
      * "answer": "123",

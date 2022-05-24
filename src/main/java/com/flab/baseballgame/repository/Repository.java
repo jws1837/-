@@ -13,4 +13,7 @@ public interface Repository {
 
 
     void insertHistory(String userAnswer, Score score, int roomId);
+
+
+    void insertRemainingCount(int roomId, int remainingCount);
 }

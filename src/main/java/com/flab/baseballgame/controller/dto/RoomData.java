@@ -11,7 +11,6 @@ public class RoomData implements Data {
     public RoomData(int number) {
         this.roomId = number;
     }
-
     public void setRoomId(int roomId) {
         this.roomId = roomId;
     }
