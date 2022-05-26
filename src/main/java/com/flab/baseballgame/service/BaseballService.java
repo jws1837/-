@@ -1,10 +1,10 @@
 package com.flab.baseballgame.service;
 
 import com.flab.baseballgame.controller.dto.*;
-import com.flab.baseballgame.controller.response.ApiResponse;
+import com.flab.baseballgame.exceptions.GameEndException;
 import com.flab.baseballgame.repository.Repository;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class BaseballService {
     private final Repository repository;
@@ -17,54 +17,45 @@ public class BaseballService {
     public Data roomCreate() {
         int roomId = Utils.getThreeRandumNumber();
         int answer = Utils.getThreeRandumNumber();
-
         repository.crete(roomId, answer);
 
-        Data data = new RoomData(roomId);
-        return data;
+        return new RoomData(roomId);
     }
 
     public Data correctAnswer(int roomId, String userAnswer) {
-        String originAnswer = repository.findOrginAnswer(roomId); //원래 정답.
-        BaseballRecordData data = applyRuleAndGetData(originAnswer, userAnswer, roomId);
-        return data;
+        String originAnswer = repository.findOriginAnswer(roomId); //원래 정답.
+        return applyRuleAndGetData(originAnswer, userAnswer, roomId);
     }
 
     private BaseballRecordData applyRuleAndGetData(String originAnswer, String userAnswer, int roomId) {
+        int remainingCount = repository.findRemainingCount(roomId);
+        boolean correct = repository.findCorrect(roomId);
+
+        if (0 == remainingCount||correct) {
+            throw new GameEndException("10번의 기회를 다 소진하거나 정답을 맞혀 게임이 종료되었습니다." );
+        }
+        remainingCount--;
+
         Score score = Rule.caculateScore(originAnswer, userAnswer);
-        boolean correct = false;
         if (3 == score.getStrike()) {
             correct = true;
         }
-        int remainingCount = repository.findRemainingCount(roomId);
-        remainingCount--;
-        repository.insertRemainingCount(roomId, remainingCount);
+        repository.insertRemainingCountAndCorrect(roomId, remainingCount, correct);
         BaseballRecordData data = new BaseballRecordData(correct, remainingCount, score);
         repository.insertHistory(userAnswer, score, roomId);
+
         return data;
     }
-
-
-    //예외로 만들어버리기 .
-    private ApiResponse notExistIdResponse() {
-        ApiResponse apiResponse = new ApiResponse("false", null);
-        apiResponse.setErr(new ApiResponse.Err("CLOSED_GAME", ""));
-        return apiResponse;
-    }
-
 
     public RemainingCountData getCount(int roomId) {
         int remainingCount = repository.findRemainingCount(roomId);
         int answerCount = 10 - remainingCount;
-        RemainingCountData data = new RemainingCountData(remainingCount, answerCount);
-        return data;
+        return new RemainingCountData(remainingCount, answerCount);
     }
 
     public HistoryData getHistory(int roomId) {
 
-        ArrayList list = repository.findHistory(roomId);
-        HistoryData data = new HistoryData(list);
-        return data;
-
+        List list = repository.findHistory(roomId);
+        return new HistoryData(list);
     }
 }

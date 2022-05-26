@@ -2,13 +2,12 @@ package com.flab.baseballgame.repository;
 
 import com.flab.baseballgame.service.Score;
 
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.List;
 
 public interface Repository {
     void crete(int roomId, int answer);
 
-    String findOrginAnswer(int key);
+    String findOriginAnswer(int key);
 
     int findRemainingCount(int roomId);
 
@@ -16,8 +15,10 @@ public interface Repository {
     void insertHistory(String userAnswer, Score score, int roomId);
 
 
-    void insertRemainingCount(int roomId, int remainingCount);
+    void insertRemainingCountAndCorrect(int roomId, int remainingCount, boolean correct);
 
 
-    ArrayList findHistory(int roomId);
+    List findHistory(int roomId);
+
+    boolean findCorrect(int roomId);
 }
