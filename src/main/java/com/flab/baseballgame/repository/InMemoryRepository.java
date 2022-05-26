@@ -22,10 +22,10 @@ public class InMemoryRepository implements Repository {
     }
 
     @Override
-    public String findOriginAnswer(int key) {
+    public int findOriginAnswer(int key) {
         Map<String, Object> innerMap = outerMap.get(key);
 //        return String.valueOf(innerMap.get("answer"));
-        return (String) innerMap.get("answer");
+        return (int) innerMap.get("answer");
     }
 
     @Override

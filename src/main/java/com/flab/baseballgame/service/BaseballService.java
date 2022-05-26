@@ -1,6 +1,6 @@
 package com.flab.baseballgame.service;
 
-import com.flab.baseballgame.controller.dto.*;
+import com.flab.baseballgame.controller.response.dto.*;
 import com.flab.baseballgame.exceptions.GameEndException;
 import com.flab.baseballgame.repository.Repository;
 
@@ -15,19 +15,20 @@ public class BaseballService {
 
 
     public Data roomCreate() {
-        int roomId = Utils.getThreeRandumNumber();
-        int answer = Utils.getThreeRandumNumber();
+        int roomId = Utils.getThreeRandomNumber();
+        int answer = Utils.getNotDuplicationRandomNumber();
+        System.out.println(answer);
         repository.crete(roomId, answer);
 
         return new RoomData(roomId);
     }
 
     public Data correctAnswer(int roomId, String userAnswer) {
-        String originAnswer = repository.findOriginAnswer(roomId); //원래 정답.
+        int originAnswer = repository.findOriginAnswer(roomId); //원래 정답.
         return applyRuleAndGetData(originAnswer, userAnswer, roomId);
     }
 
-    private BaseballRecordData applyRuleAndGetData(String originAnswer, String userAnswer, int roomId) {
+    private BaseballRecordData applyRuleAndGetData(int originAnswer, String userAnswer, int roomId) {
         int remainingCount = repository.findRemainingCount(roomId);
         boolean correct = repository.findCorrect(roomId);
 

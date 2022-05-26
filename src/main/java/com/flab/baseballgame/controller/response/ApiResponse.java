@@ -1,6 +1,6 @@
 package com.flab.baseballgame.controller.response;
 
-import com.flab.baseballgame.controller.dto.Data;
+import com.flab.baseballgame.controller.response.dto.Data;
 import org.springframework.lang.Nullable;
 
 import java.util.Optional;

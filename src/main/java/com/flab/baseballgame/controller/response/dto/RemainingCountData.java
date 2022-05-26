@@ -1,4 +1,4 @@
-package com.flab.baseballgame.controller.dto;
+package com.flab.baseballgame.controller.response.dto;
 
 public class RemainingCountData implements Data {
     private int remainingCount;

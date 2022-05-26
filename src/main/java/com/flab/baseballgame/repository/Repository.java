@@ -7,7 +7,7 @@ import java.util.List;
 public interface Repository {
     void crete(int roomId, int answer);
 
-    String findOriginAnswer(int key);
+    int findOriginAnswer(int key);
 
     int findRemainingCount(int roomId);
 

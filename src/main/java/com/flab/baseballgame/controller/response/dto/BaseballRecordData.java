@@ -1,4 +1,4 @@
-package com.flab.baseballgame.controller.dto;
+package com.flab.baseballgame.controller.response.dto;
 
 import com.flab.baseballgame.service.Score;
 
