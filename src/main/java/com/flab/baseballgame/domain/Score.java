@@ -1,4 +1,4 @@
-package com.flab.baseballgame.service;
+package com.flab.baseballgame.domain;
 
 public class Score {
     private  int strike;

@@ -1,24 +1,12 @@
 package com.flab.baseballgame.repository;
 
-import com.flab.baseballgame.service.Score;
-
-import java.util.List;
+import com.flab.baseballgame.controller.response.dto.BaseballRecordData;
+import com.flab.baseballgame.domain.BaseballGame;
 
 public interface Repository {
-    void crete(int roomId, int answer);
+    void crete(int roomId,BaseballGame game);
 
-    int findOriginAnswer(int key);
+    BaseballGame findById(int roomId);
 
-    int findRemainingCount(int roomId);
-
-
-    void insertHistory(String userAnswer, Score score, int roomId);
-
-
-    void insertRemainingCountAndCorrect(int roomId, int remainingCount, boolean correct);
-
-
-    List findHistory(int roomId);
-
-    boolean findCorrect(int roomId);
+    void save(int id,BaseballRecordData data);
 }

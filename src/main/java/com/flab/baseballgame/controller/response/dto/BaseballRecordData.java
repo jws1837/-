@@ -1,6 +1,6 @@
 package com.flab.baseballgame.controller.response.dto;
 
-import com.flab.baseballgame.service.Score;
+import com.flab.baseballgame.domain.Score;
 
 public class BaseballRecordData implements Data {
     private boolean correct;

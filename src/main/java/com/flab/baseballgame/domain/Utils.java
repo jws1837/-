@@ -1,4 +1,4 @@
-package com.flab.baseballgame.service;
+package com.flab.baseballgame.domain;
 
 import java.util.Random;
 
@@ -8,7 +8,7 @@ public class Utils {
         return internalNextInt(100,999);
     }
 
-    public static int getNotDuplicationRandomNumber() {
+    public static String getNotDuplicationRandomNumber() {
         int number;
         for (; ; ) {
             number = internalNextInt(111, 999);
@@ -18,7 +18,7 @@ public class Utils {
                 break;
             }
         }
-        return number;
+        return String.valueOf(number);
     }
 
     private static int internalNextInt(int origin, int bound) {
